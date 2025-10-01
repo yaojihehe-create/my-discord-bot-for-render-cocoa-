@@ -38,16 +38,23 @@ def run_discord_bot():
         print('---------------------------------')
         # Botが起動に成功したらフラグを立てる
         app.bot_started = True 
-
+        
     @client.event
     async def on_message(message):
         if message.author == client.user:
             return
-        if client.user.mentioned_in(message):
+
+        # 1. 【カスタム応答】「ココアさんのバカ！」に反応
+        # 小文字化して、全角・半角の「バカ」に対応
+        if message.content.lower() in ["「ココアさんのバカー！」", "ココアさんのバカー！", "ココアさんのバカ！", "ココアさんのバカー","ココアさんのバカ"]:
+            await message.channel.send("バカって言った方がバカなのよ！")
+            return # 応答したら処理を終了
+            
+        # 2. 【通常応答】Botへのメンションでの応答
+        elif client.user.mentioned_in(message):
             response = random.choice(RANDOM_RESPONSES)
             await message.channel.send(f'{message.author.mention} {response}')
-            return 
-    
+            return  
     if TOKEN:
         client.run(TOKEN)
     else:
